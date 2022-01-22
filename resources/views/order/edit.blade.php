@@ -9,14 +9,14 @@
                 </button>
             </div>
             @if(count($orders))
-            <form action="{{url('/order/')}}/{{$order->id}}/edit" method="PUT" id="editForm">
+            <form role="form" method="POST">
                 @csrf
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="product">상품</label>
-                        <select class="form-control" name="product_name">
+                        <select class="form-control" name="product_id" id="product_id">
                             @foreach($products as $p)
-                                <option value="{{$p->name}}">{{$p->name}}</option>
+                                <option value="{{$p->id}}">{{$p->name}}</option>
                             @endforeach
                         </select>
                     </div>
@@ -41,33 +41,64 @@
                         <input type="date" class="form-control" name="eta" id="eta">
                     </div>
                     <div class="form-group">
-                        <label for="product">주문상태</label>
-                        <select class="form-control" name="status" id="status">
-                            <option value="0">배송준비</option>
-                            <option value="1">배송완료</option>
+                        <label for="exampleInputEmail1">배송비</label>
+                        <input type="number" class="form-control" name="delivery" id="ord_delivery">
+                    </div>
+                    <div class="form-group">
+                        <label for="status">주문상태</label>
+                        <select class="form-control" name="status" id="ord_status">
+                            <option value="1">배송준비</option>
+                            <option value="2">배송완료</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-primary editOrd">Submit</button>
+                    <input type="hidden" id="setId">
                 </div>
             </form>
             @endif
         </div>
     </div>
 </div>
-
+<script src="https://code.jquery.com/jquery-3.6.0.slim.js" integrity="sha256-HwWONEZrpuoh951cQD1ov2HUK5zA5DwJ1DNUXaM6FsY=" crossorigin="anonymous"></script>
 <script>
-
     function whichOne(id){
-        var i = id.id;
+        var setId = id.id;
         var tr = id.closest("tr");
-        $('#product').val(tr.querySelectorAll('.ord_pName')[0].innerHTML);
         $('#qty').val(tr.querySelectorAll('.ord_qty')[0].innerHTML);
         $('#name').val(tr.querySelectorAll('.ord_cName')[0].innerHTML);
         $('#address').val(tr.querySelectorAll('.ord_ad')[0].innerHTML);
         $('#phone').val(tr.querySelectorAll('.ord_phone')[0].innerHTML);
         $('#eta').val(tr.querySelectorAll('.ord_eta')[0].innerHTML);
-        $('#editForm').attr(`action`,`{{url('/order/')}}`+'/'+i+`/edit`);
+        $('#setId').val(setId) ?? null;
     }
+    $('.editOrd').click(function (){
+        var getId = $('#setId').val();
+        var url = '{{url('order')}}';
+        url = url+'/'+getId;
+        var getStatus = $('#ord_status option:selected').val();
+        if(getStatus == 2){
+            confirm('주문을 완료합니다.');
+        }
+        $.ajax({
+            url: url,
+            method: 'PATCH',
+            data: {
+                'product_id': $('#product_id option:selected').val(),
+                'qty': $('#qty').val(),
+                'name': $('#name').val(),
+                'address': $('#address').val(),
+                'phone': $('#phone').val(),
+                'eta': $('#eta').val(),
+                'delivery': $('#ord_delivery').val(),
+                'status': getStatus,
+                "_token": '{{csrf_token()}}',
+            },
+            success: function(data){
+                location.reload();
+            }
+        })
+    });
+
 
 </script>
 

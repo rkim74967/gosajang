@@ -41,7 +41,7 @@
                             <div class="col-7 col-md-8">
                                 <div class="numbers">
                                     <p class="card-category">매출</p>
-                                    <p class="card-title">₩ 1,345<p>
+                                    <p class="card-title">{{number_format((double)str_replace(',','',$total_price), 0)}}원<p>
                                 </div>
                             </div>
                         </div>
@@ -67,7 +67,7 @@
                             <div class="col-7 col-md-8">
                                 <div class="numbers">
                                     <p class="card-category">신규주문</p>
-                                    <p class="card-title">{{count($product)}}<p>
+                                    <p class="card-title">{{count($order)}}<p>
                                 </div>
                             </div>
                         </div>

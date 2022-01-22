@@ -41,19 +41,13 @@
                                 @foreach($orders as $key => $order)
                                     <tr>
                                         <td class="ord_num">{{$orders->firstItem() + $key}}</td>
-                                        <td class="ord_pName">{{$order->product_name}}</td>
-                                        <td class="ord_qty">{{$order->qty}}</td>
-                                        <td class="ord_cName">{{$order->customer_name}}</td>
-                                        <td class="ord_ad">{{$order->address}}</td>
-                                        <td class="ord_phone">{{$order->phone}}</td>
-                                        <td class="ord_eta">{{str_replace('00:00:00','',$order->eta)}}</td>
-                                        <td class="ord_status">
-                                            @if($order->status == 0)
-                                                배송준비
-                                            @else
-                                                배송완료
-                                            @endif
-                                        </td>
+                                        <td class="ord_pName">{{$order->product->name ?? null}}</td>
+                                        <td class="ord_qty">{{$order->qty ?? null}}</td>
+                                        <td class="ord_cName">{{$order->customer_name ?? null}}</td>
+                                        <td class="ord_ad">{{$order->address ?? null}}</td>
+                                        <td class="ord_phone">{{$order->phone ?? null}}</td>
+                                        <td class="ord_eta">{{str_replace('00:00:00','',$order->eta) ?? null}}</td>
+                                        <td class="ord_status">{{$order->status->status}}</td>
                                         <td>
                                             <a href="#" data-toggle="modal" id="{{ $order->id }}" data-target="#editModal" onclick="whichOne(this)">
                                                 수정

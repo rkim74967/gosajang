@@ -12,9 +12,9 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="exampleInputEmail1">상품</label>
-                        <select class="form-control" name="product_name">
+                        <select class="form-control" name="product_id">
                             @foreach($products as $p)
-                            <option value="{{$p->name}}">{{$p->name}}</option>
+                            <option value="{{$p->id}}">{{$p->name}}</option>
                             @endforeach
                         </select>
                     </div>
@@ -41,8 +41,8 @@
                     <div class="form-group">
                         <label for="product">주문상태</label>
                         <select class="form-control" name="status" id="status">
-                            <option value="0">배송준비</option>
-{{--                            <option value="1">배송완료</option>--}}
+                            <option value="1">배송준비</option>
+{{--                            <option value="2">배송완료</option>--}}
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>

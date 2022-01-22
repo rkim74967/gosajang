@@ -23,6 +23,7 @@
                                         <th>번호</th>
                                         <th>상품</th>
                                         <th>수량</th>
+                                        <th>가격</th>
                                         <th>액션</th>
                                     </tr>
                                 </thead>

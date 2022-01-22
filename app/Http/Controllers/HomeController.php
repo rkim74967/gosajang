@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Order;
 use App\Product;
+use App\Sales;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -27,6 +28,7 @@ class HomeController extends Controller
     {
         $product = Product::all();
         $order = Order::all();
-        return view('home',compact('product','order'));
+        $total_price = Sales::sum('total_price');
+        return view('home',compact('product','order','total_price'));
     }
 }

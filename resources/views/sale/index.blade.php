@@ -29,7 +29,7 @@
                                 </div>
                                 <div class="col-sm-2">
                                     <br>
-                                    <button type="submit" class="btn-custom" id="searchDate">검색</button>
+                                    <button type="submit" class="btn-custom" id="searchDate" style="padding: 7px 10px;">검색</button>
                                 </div>
                             </div>
                         </div>
@@ -54,11 +54,13 @@
                                         <th>주소</th>
                                         <th>전화번호</th>
                                         <th>상품</th>
+                                        <th>가격</th>
                                         <th>수량</th>
-{{--                                        <th>액션</th>--}}
+                                        <th>주문완료일</th>
                                     </tr>
                                 </thead>
                                 <tbody id="sale_table">
+                                @if($sales != null)
                                 @foreach($sales as $key => $sale)
                                     <tr>
                                         <td>{{$sales->firstItem() + $key}}</td>
@@ -66,7 +68,9 @@
                                         <td>{{$sale->address}}</td>
                                         <td>{{$sale->phone}}</td>
                                         <td>{{$sale->product}}</td>
+                                        <td>{{number_format((double)str_replace(',','',$sale->total_price), 0)}}원</td>
                                         <td>{{$sale->qty}}</td>
+                                        <td>{{date_format($sale->created_at,'Y-m-d')}}</td>
 {{--                                        <td>--}}
 {{--                                            <a href="#" data-toggle="modal" id="{{ $sale->id }}" data-target="#editModal" onclick="whichOne(this)">--}}
 {{--                                                수정--}}
@@ -75,6 +79,7 @@
 {{--                                        </td>--}}
                                     </tr>
                                 @endforeach
+                                @endif
                                 </tbody>
                             </table>
 {{--                            @include('sale.edit')--}}
@@ -118,10 +123,6 @@
                                 .append('<td>'+a[i].phone+'</td>')
                                 .append('<td>'+a[i].product+'</td>')
                                 .append('<td>'+a[i].qty+'</td>')
-                                {{--.append('<td>'+'<a href="#" data-toggle="modal" id="{{ $sale->id }}" data-target="#editModal" onclick="whichOne(this)">\n' +--}}
-                                {{--    '                                                수정\n' +--}}
-                                {{--    '                                            </a> /\n' +--}}
-                                {{--    '                                            <a href="#">삭제</a>'+'</td>')--}}
                                 .append('</tr>');
                         }
                     }});
@@ -147,10 +148,6 @@
                            .append('<td>'+a[i].phone+'</td>')
                            .append('<td>'+a[i].product+'</td>')
                            .append('<td>'+a[i].qty+'</td>')
-                           .append('<td>'+'<a href="#" data-toggle="modal" id="{{ $sale->id }}" data-target="#editModal" onclick="whichOne(this)">\n' +
-                               '                                                수정\n' +
-                               '                                            </a> /\n' +
-                               '                                            <a href="#">삭제</a>'+'</td>')
                            .append('</tr>');
                    }
                }

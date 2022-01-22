@@ -90,7 +90,7 @@ class ProductController extends Controller
         $product = Product::find($id);
         $product->name = $request->input('name') ? $request->input('name') : $product->name;
         $product->qty = $request->input('qty') ? $request->input('qty') : $product->qty;
-        $product->price = $request->input('price') ? $request->input('price') : $product->price;
+        $product->price = $request->input('price') ? str_replace(',', '', $request->input('price')) : $product->price;
 
         $product->save();
 

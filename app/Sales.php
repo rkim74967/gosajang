@@ -9,4 +9,8 @@ class Sales extends Model
     //
     protected $table = 'sales';
     protected $fillable = ['name','product','qty','total','address','phone'];
+
+    function order(){
+        return $this->belongTo(Order::class);
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Order;
+use App\Sales;
 use App\Product;
 use Illuminate\Http\Request;
 use Symfony\Component\Console\Input\Input;
@@ -19,6 +20,10 @@ class OrderController extends Controller
         //
         $orders = Order::paginate(10) ?? null;
         $products = Product::all() ?? null;
+        // foreach($orders as $ord){
+        //     $getPrd = Product::where('id',$ord->product_id)->first();
+        //     dump($getPrd->name);
+        // }
 
         return view('order.order',compact('orders','products'));
     }
@@ -44,7 +49,7 @@ class OrderController extends Controller
         //
         $this->validate($request,[
 
-            'product_name' => 'required',
+            'product_id' => 'required',
             'customer_name' => 'required',
             'address' => 'required',
             'phone' => 'required',
@@ -61,13 +66,13 @@ class OrderController extends Controller
 
 
         $ord = new Order;
-        $ord->product_name = $request->input('product_name');
+        $ord->product_id = $request->input('product_id');
         $ord->customer_name = $request->input('customer_name');
         $ord->address = $request->input('address');
         $ord->phone = $request->input('phone');
         $ord->qty = $request->input('qty');
         $ord->eta = $request->input('eta');
-        $ord->status = $request->input('status');
+        $ord->status_id = $request->input('status');
 
         $ord->save();
 
@@ -93,18 +98,8 @@ class OrderController extends Controller
      */
     public function edit(Request $request, Order $order)
     {
-        //
-        $ord = Order::where('id',$order->id)->first();
-        $ord->customer_name = $request->input('customer_name') ? $request->input('customer_name') : $ord->customer_name;
-        $ord->product_name = $request->input('product_name') ? $request->input('product_name') : $ord->product_name;
-        $ord->qty = $request->input('qty') ? $request->input('qty') : $ord->qty;
-        $ord->eta = $request->input('eta') ? $request->input('eta') : $ord->eta;
-        $ord->phone = $request->input('phone') ? $request->input('phone') : $ord->phone;
-        $ord->address = $request->input('address') ? $request->input('address') : $ord->address;
-
-        $ord->save();
-
-        return redirect()->back()->with('message','저장되었습니다.');
+        
+        
     }
 
     /**
@@ -114,9 +109,45 @@ class OrderController extends Controller
      * @param  \App\Order  $order
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Order $order)
+    public function update(Request $request, $id)
     {
-        //
+        $ord = Order::find($id);
+        $ord->customer_name = $request->input('name') ? $request->input('name') : $ord->customer_name;
+        $ord->product_id = $request->input('product_id') ? (int)$request->input('product_id') : $ord->product_name;
+        if($request->input('qty') != null){
+            $prd = Product::find($ord->product->id);
+            if($ord->qty > $request->input('qty')){
+                $prd->qty += ($ord->qty - $request->input('qty'));
+                $prd->save();
+            }elseif($ord->qty < $request->input('qty')){
+                $prd->qty += ($ord->qty - $request->input('qty'));
+                $prd->save();
+            }
+        }
+        $ord->qty = $request->input('qty') ? $request->input('qty') : $ord->qty;
+        $ord->eta = $request->input('eta') ? $request->input('eta') : $ord->eta;
+        if($request->input('status') != null){
+                $ord->status_id = (int)$request->input('status');
+        }
+        $ord->phone = $request->input('phone') ? $request->input('phone') : $ord->phone;
+        $ord->address = $request->input('address') ? $request->input('address') : $ord->address;
+
+        $ord->save();
+
+
+        $sale = new Sales;
+
+        $sale->order_id = $ord->id;
+        $sale->name = $ord->customer_name;
+        $sale->product = $ord->product->name;
+        $sale->address = $ord->address;
+        $sale->qty = $ord->qty;
+        $sale->total_price = $ord->qty * $ord->product->price + $request->input('delivery');
+        $sale->phone = $ord->phone;
+
+        $sale->save();
+
+        return response()->json(array('data'=>$ord,));
     }
 
     /**
@@ -129,6 +160,6 @@ class OrderController extends Controller
     {
         $order = Order::find($id);
         $order->delete();
-        return redirect()->back()->with('message','삭제되었습니다');
+        return redirect()->back();
     }
 }
